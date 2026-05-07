@@ -52,7 +52,7 @@ def load_and_clean_data(path_to_data):
 
 # 2017 - 2021
 def load_top_200(path):
-    df = pd.read_csv(path)
+    df = pd.read_csv(path, sep= '#')
     df['Date'] = pd.to_datetime(df['Date']).dt.tz_localize(None)
     df['join_artist'] = df['Artist'].astype(str).str.lower().str.strip()
     df['join_song'] = df['Track Name'].astype(str).str.lower().str.strip()

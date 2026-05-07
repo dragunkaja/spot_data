@@ -53,3 +53,60 @@ def plot_comparison_pies(powody_list, titles):
         )
         axes[i].set_title(title)
     plt.tight_layout()
+
+
+
+def plot_top_artists_bar(df_plot):
+    plt.figure(figsize=(12, 6))
+    sns.set_style("whitegrid")
+
+    ax = sns.barplot(data=df_plot, x='artist', y='hours', hue='artist', palette='viridis', legend=False)
+
+    plt.title('Top Artyści', fontsize=16, fontweight='bold')
+    plt.xlabel('')
+    plt.ylabel('Godziny słuchania', fontsize=12)
+    plt.xticks(rotation=45, ha='right')
+
+    for container in ax.containers:
+        ax.bar_label(container, fmt='%.0f h', padding=0)
+
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_songs_scatter(df_plot):
+    plt.figure(figsize=(12, 8))
+    sns.scatterplot(
+        data=df_plot, x='streams', y='hours', size='hours',
+        hue='song', legend=False, sizes=(100, 1000), palette='viridis', alpha=0.7
+    )
+
+    for i in range(len(df_plot)):
+        plt.text(df_plot.streams.iloc[i] + 1, df_plot.hours.iloc[i] + 0.1,
+                 df_plot.song.iloc[i], fontsize=9)
+
+    plt.title('Relacja: Liczba odtworzeń vs Czas słuchania', fontsize=16)
+    plt.xlabel('Liczba odtworzeń (x)', fontsize=12)
+    plt.ylabel('Suma godzin (h)', fontsize=12)
+    plt.grid(True, alpha=0.3)
+    plt.show()
+
+
+def plot_horizontal_lollipop(df_plot, x_col, y_col, label_col, title, color='#1DB954'):
+    """Uniwersalna funkcja do wykresów Lollipop (poziomych)"""
+    df_plot = df_plot.sort_values(x_col, ascending=True)
+
+    plt.figure(figsize=(10, 8))
+    plt.hlines(y=df_plot[y_col], xmin=0, xmax=df_plot[x_col], color='grey', alpha=0.4)
+    plt.scatter(df_plot[x_col], df_plot[y_col], color=color, s=100, alpha=1)
+
+    for i, val in enumerate(df_plot[x_col]):
+        plt.text(val + (df_plot[x_col].max() * 0.02), i, f"{int(val)}{'x' if 'ilosc' in x_col else 'h'}",
+                 va='center', fontsize=10, fontweight='bold')
+
+    plt.title(title, fontsize=16)
+    plt.xlabel(x_col)
+    plt.ylabel('')
+    sns.despine(left=True, bottom=True)
+    plt.tight_layout()
+    plt.show()

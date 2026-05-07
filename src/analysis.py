@@ -58,3 +58,28 @@ def get_discovery_types(df_final):
     return df_final
 
 
+def get_top_albums(df, n=15):
+    top_album = (df.groupby(['artist', 'album'])['ms_played']
+                 .sum()
+                 .sort_values(ascending=False)
+                 .reset_index())
+    top_album['hours'] = (top_album['ms_played'] / 3600000).round(1)
+    return top_album.head(n)
+
+
+def get_top_played_by_reason(df,reason= 'clickrow', n=15):
+    played = df[df['reason_start'] == reason]
+    most_played = (played.groupby(['artist', 'song'])
+                    .size()
+                    .reset_index(name='ilosc')
+                    .sort_values(by='ilosc', ascending=False))
+    # etykieta do wykresu
+    most_played['label'] = most_played['artist'] + ' - ' + most_played['song']
+    return most_played.head(n)
+
+def prepare_pie_data(series, top_n=4):
+    """Grupuje najrzadsze powody w kategorię 'Inne' dla wykresów kołowych"""
+    counts = series.value_counts()
+    top = counts.head(top_n)
+    inne = pd.Series({'Inne': counts.iloc[top_n:].sum()})
+    return pd.concat([top, inne])
